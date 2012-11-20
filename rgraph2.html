@@ -1,0 +1,241 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<title>RGraph Version 2</title>
+
+</head>
+<body>
+
+<div id="canvas" style="height:300px;width:400px;border:1px solid blue;"></div>
+<script type="text/javascript" src="lib/raphael.js"></script>
+<script type="text/javascript" src="lib/jquery-1.8.2.js"></script>
+
+<script type="text/javascript">
+var SpringLayout = function(graph) {
+    this.graph = graph;
+    this.iterations = 500;
+    this.maxRepulsiveForceDistance = 6;
+    this.k = 2;
+    this.c = 0.01;
+    this.maxVertexMovement = 0.5;
+    this.layout();
+};
+SpringLayout.prototype = {
+    layout: function() {
+        this.layoutPrepare();
+        for (var i = 0; i < this.iterations; i++) {
+            this.layoutIteration();
+        }
+        this.layoutCalcBounds();
+    },
+
+    layoutPrepare: function() {
+        for (i in this.graph.nodes) {
+            var node = this.graph.nodes[i];
+            node.layoutPosX = 0;
+            node.layoutPosY = 0;
+            node.layoutForceX = 0;
+            node.layoutForceY = 0;
+        }
+
+    },
+
+    layoutCalcBounds: function() {
+        var minx = Infinity, maxx = -Infinity, miny = Infinity, maxy = -Infinity;
+
+        for (i in this.graph.nodes) {
+            var x = this.graph.nodes[i].layoutPosX;
+            var y = this.graph.nodes[i].layoutPosY;
+
+            if(x > maxx) maxx = x;
+            if(x < minx) minx = x;
+            if(y > maxy) maxy = y;
+            if(y < miny) miny = y;
+        }
+
+        this.graph.layoutMinX = minx;
+        this.graph.layoutMaxX = maxx;
+        this.graph.layoutMinY = miny;
+        this.graph.layoutMaxY = maxy;
+    },
+
+    layoutIteration: function() {
+        // Forces on nodes due to node-node repulsions
+
+        var prev = new Array();
+        for(var c in this.graph.nodes) {
+            var node1 = this.graph.nodes[c];
+            for (var d in prev) {
+                var node2 = this.graph.nodes[prev[d]];
+                this.layoutRepulsive(node1, node2);
+
+            }
+            prev.push(c);
+        }
+
+        // Forces on nodes due to edge attractions
+        for (var i = 0; i < this.graph.edges.length; i++) {
+            var edge = this.graph.edges[i];
+            this.layoutAttractive(edge);
+        }
+
+        // Move by the given force
+        for (i in this.graph.nodes) {
+            var node = this.graph.nodes[i];
+            var xmove = this.c * node.layoutForceX;
+            var ymove = this.c * node.layoutForceY;
+
+            var max = this.maxVertexMovement;
+            if(xmove > max) xmove = max;
+            if(xmove < -max) xmove = -max;
+            if(ymove > max) ymove = max;
+            if(ymove < -max) ymove = -max;
+
+            node.layoutPosX += xmove;
+            node.layoutPosY += ymove;
+            node.layoutForceX = 0;
+            node.layoutForceY = 0;
+        }
+    },
+
+    layoutRepulsive: function(node1, node2) {
+        if (typeof node1 == 'undefined' || typeof node2 == 'undefined')
+            return;
+        var dx = node2.layoutPosX - node1.layoutPosX;
+        var dy = node2.layoutPosY - node1.layoutPosY;
+        var d2 = dx * dx + dy * dy;
+        if(d2 < 0.01) {
+            dx = 0.1 * Math.random() + 0.1;
+            dy = 0.1 * Math.random() + 0.1;
+            var d2 = dx * dx + dy * dy;
+        }
+        var d = Math.sqrt(d2);
+        if(d < this.maxRepulsiveForceDistance) {
+            var repulsiveForce = this.k * this.k / d;
+            node2.layoutForceX += repulsiveForce * dx / d;
+            node2.layoutForceY += repulsiveForce * dy / d;
+            node1.layoutForceX -= repulsiveForce * dx / d;
+            node1.layoutForceY -= repulsiveForce * dy / d;
+        }
+    },
+
+    layoutAttractive: function(edge) {
+        var node1 = edge.source;
+        var node2 = edge.target;
+
+        var dx = node2.layoutPosX - node1.layoutPosX;
+        var dy = node2.layoutPosY - node1.layoutPosY;
+        var d2 = dx * dx + dy * dy;
+        if(d2 < 0.01) {
+            dx = 0.1 * Math.random() + 0.1;
+            dy = 0.1 * Math.random() + 0.1;
+            var d2 = dx * dx + dy * dy;
+        }
+        var d = Math.sqrt(d2);
+        if(d > this.maxRepulsiveForceDistance) {
+            d = this.maxRepulsiveForceDistance;
+            d2 = d * d;
+        }
+        var attractiveForce = (d2 - this.k * this.k) / this.k;
+        if(edge.attraction == undefined) edge.attraction = 1;
+        attractiveForce *= Math.log(edge.attraction) * 0.5 + 1;
+
+        node2.layoutForceX -= attractiveForce * dx / d;
+        node2.layoutForceY -= attractiveForce * dy / d;
+        node1.layoutForceX += attractiveForce * dx / d;
+        node1.layoutForceY += attractiveForce * dy / d;
+    }
+};
+
+
+//Raphael的arrow扩展
+    (!Raphael.fn.arrow ) && (Raphael.fn.arrow=function(from,to){
+        var line=null,triangle=null;
+        if(from.from && from.to && from.triangle && from.line){
+            to = from.to;
+            triangle= from.triangle;
+            line = from.line;
+            from = from.from;
+        }
+        //adjustx:在IE下getBBox获取的坐标没有算上_viewBox中的部分。
+        //直接访问_viewBox不是好的做法，但是Raphael并没有提供接口访问该属性
+        //椭圆对象getBBox()在IE下xy坐标有问题
+        var bbfrom = from.getBBox(),bbto= to.getBBox(),adjustx=(document.all?(this._viewBox||[0,0])[0]:0),adjusty=(document.all?(this._viewBox||[0,0])[1]:0),
+            fromx=((from.type=="ellipse" && document.all)?from.attr("cx"):bbfrom.x+adjustx+bbfrom.width/2),
+            fromy=((from.type=="ellipse" && document.all)?from.attr("cy")+bbfrom.height/2:bbfrom.y+adjusty+bbfrom.height),
+            tox=((to.type=="ellipse" && document.all)?to.attr("cx"):bbto.x+adjustx+bbto.width/2),
+            toy= ((to.type=="ellipse" && document.all)?to.attr("cy")-bbto.height/2:bbto.y+adjusty),
+            c=(tox==fromx)?Math.PI/2:Math.atan((toy-fromy)/(tox-fromx)),
+            sign=(tox==fromx)?1:((tox-fromx)/Math.abs(tox-fromx)),
+            triangleX1= (tox-Math.cos(c-Math.PI/12)*15*sign).toFixed(1),
+            triangleY1= (toy-Math.sin(c-Math.PI/12)*15*sign).toFixed(1),
+            triangleX2= (tox-Math.cos(c+Math.PI/12)*15*sign).toFixed(1),
+            triangleY2= (toy-Math.sin(c+Math.PI/12)*15*sign).toFixed(1),
+            pathstr="M"+tox+","+toy+" L"+triangleX1+","+triangleY1+" L"+triangleX2+","+triangleY2+" L"+tox+","+toy;
+            if(!triangle){
+                triangle = this.path(pathstr).attr({stroke: "#000",fill:"#f5f5f5","stroke-width":2}).toBack();
+            }else{
+                triangle.attr("path",pathstr).toBack();
+            }
+            if(!line){
+                line= this.path("M"+fromx+","+fromy+" L"+tox+","+toy).toBack();
+            }else{
+                line.attr("path","M"+fromx+","+fromy+" L"+tox+","+toy).toBack();
+            }
+            line.attr({"stroke-width":2});
+            return {from :from ,to:to,line:line,triangle:triangle};
+    });
+
+var g = {
+	nodes:[
+		{id:1,label:"节点1"},
+		{id:2,label:"节点2"},
+		{id:3,label:"节点3"},
+		{id:4,label:"节点4"}
+	],
+	edges:[]
+};
+
+g.edges.push({source:g.nodes[0],target:g.nodes[1]});
+g.edges.push({source:g.nodes[1],target:g.nodes[2]});
+g.edges.push({source:g.nodes[0],target:g.nodes[2]});
+g.edges.push({source:g.nodes[0],target:g.nodes[3]});
+
+
+var layouter  = new SpringLayout(g);
+
+//draw
+var width = 400,
+	height = 300,
+	radius = 50,
+	factorX = (width - 2 * radius) / (g.layoutMaxX - g.layoutMinX);
+	factorY = (height - 2 * radius) / (g.layoutMaxY - g.layoutMinY),
+	translate = function(point) {
+        return [
+            (point[0] - g.layoutMinX) * factorX + radius,
+            (point[1] - g.layoutMinY) * factorY + radius
+        ];
+    };
+
+var paper = Raphael(document.getElementById("canvas"), 400, 300);
+
+//计算每个节点的坐标
+for (var i = g.nodes.length - 1; i >= 0; i--) {
+	var node = g.nodes[i];
+	node.point = translate([node.layoutPosX, node.layoutPosY]);
+
+	node.text = paper.text(node.point[0],node.point[1],node.label);
+	node.shape = paper.rect(node.point[0]-50,node.point[1]-25, 100, 50);
+};
+
+for (var i = g.edges.length - 1; i >= 0; i--) {
+	var edge = g.edges[i];
+	paper.arrow(edge.source.shape,edge.target.shape);
+};
+
+
+</script>
+
+</body>
+</html>
