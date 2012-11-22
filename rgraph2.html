@@ -3,300 +3,77 @@
 <head>
 	<meta charset="UTF-8">
 	<title>RGraph Version 2</title>
-
+    <meta http-equiv="X-UA-Compatible" content="edge"/>
 </head>
 <body>
 
-<div id="canvas" style="height:300px;width:400px;border:1px solid blue;"></div>
+<div id="canvas">
+    <div id="toolbar" class="toolbar">
+        <span style="float:right; margin-top:6px;padding-right:20px;"></span>
+        <span>
+            <input type="button" id="" value="放大" class="tbtn" onclick="graph.setZoom(graph.getZoom()*1.1);" />
+            <input type="button" id="" value="复位" class="tbtn" onclick="graph.reset();"  />
+            <input type="button" id="" value="缩小"  class="tbtn" onclick="graph.setZoom(graph.getZoom()*0.9);" />
+            <b id="msg" style="color:red;"></b>
+        </span>
+    </div>
+
+</div>
+<style type="text/css">
+html,body,#canvas{margin:0px;padding:0px;height:100%; overflow:hidden; font-size:12px;}
+    #canvas{position:relative;z-index:1;}
+    .toolbar{position:absolute;left:0px;top:0px;width:100%;padding:4px 0px;background-color:#ECF4FA;font-size:12px;border:1px solid #ccc;margin-bottom:1px;opacity:0.8;filter:alpha(opacity=80);}
+    .tbtn {
+        -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+        -webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+        box-shadow:inset 0px 1px 0px 0px #ffffff;
+        background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #ededed), color-stop(1, #dfdfdf) );
+        background:-moz-linear-gradient( center top, #ededed 5%, #dfdfdf 100% );
+        background-color:#ededed;
+        -moz-border-radius:6px;
+        -webkit-border-radius:6px;
+        border-radius:6px;
+        border:1px solid #dcdcdc;
+        display:inline-block;
+        color:#444;
+        font-family:arial;
+        font-size:12px;
+        font-weight:bold;
+        padding:3px 10px;
+        text-decoration:none;
+        text-shadow:1px 1px 0px #ffffff;
+        cursor:pointer;
+    }
+    .tbtn:hover {
+        background:-webkit-gradient( linear, left top, left bottom, color-stop(0.05, #dfdfdf), color-stop(1, #ededed) );
+        background:-moz-linear-gradient( center top, #dfdfdf 5%, #ededed 100% );
+        background-color:#dfdfdf;
+    }
+    .tbtn:active {
+        position:relative;
+        top:1px;
+    }
+</style>
 <script type="text/javascript" src="lib/raphael.js"></script>
-<script type="text/javascript" src="lib/jquery-1.8.2.js"></script>
+<script type="text/javascript" src="lib/rgraph2.js"></script>
 
 <script type="text/javascript">
-var SpringLayout = function(graph) {
-    this.graph = graph;
-    this.iterations = 500;
-    this.maxRepulsiveForceDistance = 6;
-    this.k = 2;
-    this.c = 0.01;
-    this.maxVertexMovement = 0.5;
-    this.layout();
-};
-SpringLayout.prototype = {
-    layout: function() {
-        this.layoutPrepare();
-        for (var i = 0; i < this.iterations; i++) {
-            this.layoutIteration();
-        }
-        this.layoutCalcBounds();
+var graph = new RGraph("canvas");
+
+graph.loadData({
+    nodes:{
+        "1":{label:"节点1"},
+        "2":{label:"节点2"},
+        "3":{label:"节点3"},
+        "4":{label:"节点4"}
     },
-
-    layoutPrepare: function() {
-        for (i in this.graph.nodes) {
-            var node = this.graph.nodes[i];
-            node.layoutPosX = 0;
-            node.layoutPosY = 0;
-            node.layoutForceX = 0;
-            node.layoutForceY = 0;
-        }
-
-    },
-
-    layoutCalcBounds: function() {
-        var minx = Infinity, maxx = -Infinity, miny = Infinity, maxy = -Infinity;
-
-        for (i in this.graph.nodes) {
-            var x = this.graph.nodes[i].layoutPosX;
-            var y = this.graph.nodes[i].layoutPosY;
-
-            if(x > maxx) maxx = x;
-            if(x < minx) minx = x;
-            if(y > maxy) maxy = y;
-            if(y < miny) miny = y;
-        }
-
-        this.graph.layoutMinX = minx;
-        this.graph.layoutMaxX = maxx;
-        this.graph.layoutMinY = miny;
-        this.graph.layoutMaxY = maxy;
-    },
-
-    layoutIteration: function() {
-        // Forces on nodes due to node-node repulsions
-
-        var prev = new Array();
-        for(var c in this.graph.nodes) {
-            var node1 = this.graph.nodes[c];
-            for (var d in prev) {
-                var node2 = this.graph.nodes[prev[d]];
-                this.layoutRepulsive(node1, node2);
-
-            }
-            prev.push(c);
-        }
-
-        // Forces on nodes due to edge attractions
-        for (var i = 0; i < this.graph.edges.length; i++) {
-            var edge = this.graph.edges[i];
-            this.layoutAttractive(edge);
-        }
-
-        // Move by the given force
-        for (i in this.graph.nodes) {
-            var node = this.graph.nodes[i];
-            var xmove = this.c * node.layoutForceX;
-            var ymove = this.c * node.layoutForceY;
-
-            var max = this.maxVertexMovement;
-            if(xmove > max) xmove = max;
-            if(xmove < -max) xmove = -max;
-            if(ymove > max) ymove = max;
-            if(ymove < -max) ymove = -max;
-
-            node.layoutPosX += xmove;
-            node.layoutPosY += ymove;
-            node.layoutForceX = 0;
-            node.layoutForceY = 0;
-        }
-    },
-
-    layoutRepulsive: function(node1, node2) {
-        if (typeof node1 == 'undefined' || typeof node2 == 'undefined')
-            return;
-        var dx = node2.layoutPosX - node1.layoutPosX;
-        var dy = node2.layoutPosY - node1.layoutPosY;
-        var d2 = dx * dx + dy * dy;
-        if(d2 < 0.01) {
-            dx = 0.1 * Math.random() + 0.1;
-            dy = 0.1 * Math.random() + 0.1;
-            var d2 = dx * dx + dy * dy;
-        }
-        var d = Math.sqrt(d2);
-        if(d < this.maxRepulsiveForceDistance) {
-            var repulsiveForce = this.k * this.k / d;
-            node2.layoutForceX += repulsiveForce * dx / d;
-            node2.layoutForceY += repulsiveForce * dy / d;
-            node1.layoutForceX -= repulsiveForce * dx / d;
-            node1.layoutForceY -= repulsiveForce * dy / d;
-        }
-    },
-
-    layoutAttractive: function(edge) {
-        var node1 = edge.source;
-        var node2 = edge.target;
-
-        var dx = node2.layoutPosX - node1.layoutPosX;
-        var dy = node2.layoutPosY - node1.layoutPosY;
-        var d2 = dx * dx + dy * dy;
-        if(d2 < 0.01) {
-            dx = 0.1 * Math.random() + 0.1;
-            dy = 0.1 * Math.random() + 0.1;
-            var d2 = dx * dx + dy * dy;
-        }
-        var d = Math.sqrt(d2);
-        if(d > this.maxRepulsiveForceDistance) {
-            d = this.maxRepulsiveForceDistance;
-            d2 = d * d;
-        }
-        var attractiveForce = (d2 - this.k * this.k) / this.k;
-        if(edge.attraction == undefined) edge.attraction = 1;
-        attractiveForce *= Math.log(edge.attraction) * 0.5 + 1;
-
-        node2.layoutForceX -= attractiveForce * dx / d;
-        node2.layoutForceY -= attractiveForce * dy / d;
-        node1.layoutForceX += attractiveForce * dx / d;
-        node1.layoutForceY += attractiveForce * dy / d;
-    }
-};
-
-
-//Raphael的arrow扩展
-    (!Raphael.fn.arrow ) && (Raphael.fn.arrow=function(obj1,obj2){
-
-        //=====find best connection of two objects starts here ======
-        
-        /* get bounding boxes of target and source */
-        var bb1 = obj1.getBBox();
-        var bb2 = obj2.getBBox();
-        var off1 = 0;
-        var off2 = 0;
-        /* coordinates for potential connection coordinates from/to the objects */
-        var p = [
-            /* NORTH 1 */
-            { x: bb1.x + bb1.width / 2, y: bb1.y - off1 },
-            /* SOUTH 1 */
-            { x: bb1.x + bb1.width / 2, y: bb1.y + bb1.height + off1 },
-            /* WEST */
-            { x: bb1.x - off1, y: bb1.y + bb1.height / 2 },
-            /* EAST  1 */
-            { x: bb1.x + bb1.width + off1, y: bb1.y + bb1.height / 2 },
-            /* NORTH 2 */
-            { x: bb2.x + bb2.width / 2, y: bb2.y - off2 },
-            /* SOUTH 2 */
-            { x: bb2.x + bb2.width / 2, y: bb2.y + bb2.height + off2 },
-            /* WEST  2 */
-            { x: bb2.x - off2, y: bb2.y + bb2.height / 2 },
-            /* EAST  2 */
-            { x: bb2.x + bb2.width + off2, y: bb2.y + bb2.height / 2 }
-        ];
-      
-        /* distances between objects and according coordinates connection */
-        var d = {}, dis = [];
-
-        /*
-        * find out the best connection coordinates by trying all possible ways
-        */
-        /* loop the first object's connection coordinates */
-        for (var i = 0; i < 4; i++) {
-            /* loop the seond object's connection coordinates */
-            for (var j = 4; j < 8; j++) {
-                var dx = Math.abs(p[i].x - p[j].x);
-                var dy = Math.abs(p[i].y - p[j].y);
-                if ((i == j - 4) || (((i != 3 && j != 6) || p[i].x < p[j].x)
-                    && ((i != 2 && j != 7) || p[i].x > p[j].x)
-                    && ((i != 0 && j != 5) || p[i].y > p[j].y)
-                    && ((i != 1 && j != 4) || p[i].y < p[j].y))){
-                dis.push(dx + dy);
-                d[dis[dis.length - 1].toFixed(3)] = [i, j];
-                }
-            }
-        }
-        var res = dis.length == 0 ? [0, 4] : d[Math.min.apply(Math, dis).toFixed(3)];
-        //=====find best connection of two objects starts ends ======
-
-        var fromx = p[res[0]].x,fromy = p[res[0]].y,tox=p[res[1]].x,toy = p[res[1]].y,
-            sign=(tox==fromx)?1:((tox-fromx)/Math.abs(tox-fromx)),
-            c=(tox==fromx)?Math.PI/2:Math.atan((toy-fromy)/(tox-fromx)),
-            triangleX1= (tox-Math.cos(c-Math.PI/12)*15*sign).toFixed(1),
-            triangleY1= (toy-Math.sin(c-Math.PI/12)*15*sign).toFixed(1),
-            triangleX2= (tox-Math.cos(c+Math.PI/12)*15*sign).toFixed(1),
-            triangleY2= (toy-Math.sin(c+Math.PI/12)*15*sign).toFixed(1),
-            line = this.path("M"+fromx+","+fromy+" L"+tox+","+toy).toBack(),
-            pathstr="M"+tox+","+toy+" L"+triangleX1+","+triangleY1+" L"+triangleX2+","+triangleY2+" L"+tox+","+toy,
-            triangle = this.path(pathstr).attr({stroke: "#000",fill:"#000","stroke-width":2}).toBack();
-
-        /*var line=null,triangle=null;
-        if(from.from && from.to && from.triangle && from.line){
-            from = from.from;
-            to = from.to;
-            triangle= from.triangle;
-            line = from.line;
-        }
-        var bbfrom = from.getBBox(),
-            bbto= to.getBBox(),
-            offx = bbfrom.x+bbfrom.width/2-(bbto.x+bbto.width/2),
-            offy = bbfrom.y +bbfrom.height/2-(bbto.y+bbto.height/2),
-            fromx=bbfrom.x+bbfrom.width/2,
-            fromy=offy > 0 ? bbfrom.y:bbfrom.y2,
-            tox=bbto.x+bbto.width/2,
-            toy=offy > 0 ? bbto.y2: bbto.y,
-            c=(tox==fromx)?Math.PI/2:Math.atan((toy-fromy)/(tox-fromx)),
-            sign=(tox==fromx)?1:((tox-fromx)/Math.abs(tox-fromx)),
-            triangleX1= (tox-Math.cos(c-Math.PI/12)*15*sign).toFixed(1),
-            triangleY1= (toy-Math.sin(c-Math.PI/12)*15*sign).toFixed(1),
-            triangleX2= (tox-Math.cos(c+Math.PI/12)*15*sign).toFixed(1),
-            triangleY2= (toy-Math.sin(c+Math.PI/12)*15*sign).toFixed(1),
-            pathstr="M"+tox+","+toy+" L"+triangleX1+","+triangleY1+" L"+triangleX2+","+triangleY2+" L"+tox+","+toy;
-            if(!triangle){
-                triangle = this.path(pathstr).attr({stroke: "#000",fill:"#f5f5f5","stroke-width":2}).toBack();
-            }else{
-                triangle.attr("path",pathstr).toBack();
-            }
-            if(!line){
-                line= this.path("M"+fromx+","+fromy+" L"+tox+","+toy).toBack();
-            }else{
-                line.attr("path","M"+fromx+","+fromy+" L"+tox+","+toy).toBack();
-            }
-            line.attr({"stroke-width":2});
-            return {from :from ,to:to,line:line,triangle:triangle};*/
-    });
-
-var g = {
-	nodes:[
-		{id:1,label:"节点1"},
-		{id:2,label:"节点2"},
-		{id:3,label:"节点3"},
-		{id:4,label:"节点4"}
-	],
-	edges:[]
-};
-
-g.edges.push({source:g.nodes[0],target:g.nodes[1]});
-g.edges.push({source:g.nodes[1],target:g.nodes[2]});
-g.edges.push({source:g.nodes[0],target:g.nodes[2]});
-g.edges.push({source:g.nodes[0],target:g.nodes[3]});
-
-
-var layouter  = new SpringLayout(g);
-
-//draw
-var width = 400,
-	height = 300,
-	radius = 50,
-	factorX = (width - 2 * radius) / (g.layoutMaxX - g.layoutMinX);
-	factorY = (height - 2 * radius) / (g.layoutMaxY - g.layoutMinY),
-	translate = function(point) {
-        return [
-            (point[0] - g.layoutMinX) * factorX + radius,
-            (point[1] - g.layoutMinY) * factorY + radius
-        ];
-    };
-
-var paper = Raphael(document.getElementById("canvas"), 400, 300);
-
-//计算每个节点的坐标
-for (var i = g.nodes.length - 1; i >= 0; i--) {
-	var node = g.nodes[i];
-	node.point = translate([node.layoutPosX, node.layoutPosY]);
-
-	node.text = paper.text(node.point[0],node.point[1],node.label);
-	node.shape = paper.rect(node.point[0]-50,node.point[1]-25, 100, 50);
-};
-
-for (var i = g.edges.length - 1; i >= 0; i--) {
-	var edge = g.edges[i];
-	paper.arrow(edge.source.shape,edge.target.shape);
-};
-
+    edges:[
+        {source:"1",target:"2",label:"1->2"},
+        {source:"1",target:"3",label:"1->3"},
+        {source:"2",target:"3",label:"2->3"},
+        {source:"4",target:"2",label:"4->2"}
+    ]
+});
 
 </script>
 
