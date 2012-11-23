@@ -12,7 +12,7 @@
         <span style="float:right; margin-top:6px;padding-right:20px;"></span>
         <span>
             <input type="button" id="" value="放大" class="tbtn" onclick="graph.setZoom(graph.getZoom()*1.1);" />
-            <input type="button" id="" value="复位" class="tbtn" onclick="graph.reset();"  />
+            <input type="button" id="" value="复位" class="tbtn" onclick="graph.reset();graph.center('2');"  />
             <input type="button" id="" value="缩小"  class="tbtn" onclick="graph.setZoom(graph.getZoom()*0.9);" />
             <b id="msg" style="color:red;"></b>
         </span>
@@ -21,7 +21,7 @@
 </div>
 <style type="text/css">
 html,body,#canvas{margin:0px;padding:0px;height:100%; overflow:hidden; font-size:12px;}
-    #canvas{position:relative;z-index:1;}
+    #canvas{position:relative;z-index:1;/*width:600px;height:400px;left:200px;top:100px;*/}
     .toolbar{position:absolute;left:0px;top:0px;width:100%;padding:4px 0px;background-color:#ECF4FA;font-size:12px;border:1px solid #ccc;margin-bottom:1px;opacity:0.8;filter:alpha(opacity=80);}
     .tbtn {
         -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
@@ -58,11 +58,11 @@ html,body,#canvas{margin:0px;padding:0px;height:100%; overflow:hidden; font-size
 <script type="text/javascript" src="lib/rgraph2.js"></script>
 
 <script type="text/javascript">
-var graph = new RGraph("canvas");
+graph = new RGraph("canvas");
 
 graph.loadData({
     nodes:{
-        "1":{label:"节点1"},
+        "1":{label:"{name}\n{type}",name:"节点1",type:"任务"},
         "2":{label:"节点2"},
         "3":{label:"节点3"},
         "4":{label:"节点4"}
