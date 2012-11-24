@@ -14,6 +14,10 @@
             <input type="button" id="" value="放大" class="tbtn" onclick="graph.setZoom(graph.getZoom()*1.1);" />
             <input type="button" id="" value="复位" class="tbtn" onclick="graph.reset();graph.center('2');"  />
             <input type="button" id="" value="缩小"  class="tbtn" onclick="graph.setZoom(graph.getZoom()*0.9);" />
+
+            <input type="button" id="" value="增加节点"  class="tbtn" onclick="addNode();" />
+            <input type="button" id="" value="更新节点"  class="tbtn" onclick="updateNode();" />
+            <input type="button" id="" value="删除节点"  class="tbtn" onclick="removeNode();" />
             <b id="msg" style="color:red;"></b>
         </span>
     </div>
@@ -58,25 +62,63 @@ html,body,#canvas{margin:0px;padding:0px;height:100%; overflow:hidden; font-size
 <script type="text/javascript" src="lib/rgraph2.js"></script>
 
 <script type="text/javascript">
-graph = new RGraph("canvas");
+window.onload = function(){
+    graph = new RGraph("canvas",{
+        onnodeclick:function(node){
+            alert(node.nodeId);
+        },
+        onnodemouseover:function(node){
+            //console.log(node.nodeId +" mouse over");
+        },
+        onnodemouseout:function(node){
+            //console.log(node.nodeId +" mouse out");
+        }
+    });
 
-graph.loadData({
-    nodes:{
-        "1":{label:"{name}\n{type}",name:"节点1",type:"任务"},
-        "2":{label:"节点2"},
-        "3":{label:"节点3"},
-        "4":{label:"节点4"}
-    },
-    edges:[
-        {source:"1",target:"2",label:"1->2"},
-        {source:"1",target:"3",label:"1->3"},
-        {source:"2",target:"3",label:"2->3"},
-        {source:"4",target:"2",label:"4->2"}
-    ]
-});
+    graph.loadData({
+        nodes:{
+            "1":{label:"{name}\n{type}",name:"节点1",type:"任务"},
+            "2":{label:"节点2"},
+            "3":{label:"节点3"},
+            "4":{label:"节点4"},
+            "5":{label:"节点5，孤独的节点"}
+        },
+        edges:[
+            {source:"1",target:"2",label:"1->2"},
+            {source:"1",target:"3",label:"1->3"},
+            {source:"2",target:"3",label:"2->3"},
+            {source:"4",target:"2",label:"4->2"}
+        ]
+    });
 
-graph.center("2");
+    //graph.center("2");
 
+
+    var maxNode = 6;
+    addNode=function (){
+        graph.addNode({
+            nodeId:maxNode,
+            label:"我是节点"+maxNode
+        });
+        graph.addEdge({
+            source:maxNode,
+            target:"1",
+            label:maxNode+"->1"
+        });
+        maxNode++;
+    }
+
+    updateNode=function (){
+        var node = graph.getNode("1");
+        node.label="{name}\n{type}\n新行";
+        graph.updateNode("1");
+    }
+
+
+    removeNode=function (){
+        graph.removeNode("3");
+    }
+}
 </script>
 
 </body>
