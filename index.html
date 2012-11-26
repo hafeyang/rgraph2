@@ -18,6 +18,7 @@
             <input type="button" id="" value="增加节点"  class="tbtn" onclick="addNode();" />
             <input type="button" id="" value="更新节点"  class="tbtn" onclick="updateNode();" />
             <input type="button" id="" value="删除节点"  class="tbtn" onclick="removeNode();" />
+            <input type="button" id="" value="重新布局"  class="tbtn" onclick="relayout();" />
             <b id="msg" style="color:red;margin-left:200px;">IE&lt;9请暂时移步:)</b>
         </span>
     </div>
@@ -58,8 +59,8 @@ html,body,#canvas{margin:0px;padding:0px;height:100%; overflow:hidden; font-size
         top:1px;
     }
 </style>
-<script type="text/javascript" src="lib/raphael-min.js"></script>
-<script type="text/javascript" src="lib/rgraph2.js"></script>
+<script type="text/javascript" src="https://raw.github.com/hafeyang/rgraph2/master/lib/raphael-min.js"></script>
+<script type="text/javascript" src="https://raw.github.com/hafeyang/rgraph2/master/lib/rgraph2.js"></script>
 
 <script type="text/javascript">
 window.onload = function(){
@@ -117,6 +118,11 @@ window.onload = function(){
 
     removeNode=function (){
         graph.removeNode("3");
+    }
+
+    relayout = function(){
+        graph.relayout();
+        graph.center("2");
     }
 }
 </script>
