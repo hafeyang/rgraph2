@@ -115,7 +115,7 @@ RGraph包含特性：
 
 ###instance.addNode(node)
 
-添加节点，节点必须有`nodeId`,`label`属性，`rectStyle`用于定义节点边框样式，样式格式详见[Raphaeljs Element.attr]("http://raphaeljs.com/reference.html#Element.attr")，`textStyle`定义文字样式。
+添加节点，节点必须有`nodeId`,`label`属性，`rectStyle`用于定义节点边框样式，样式格式详见[Raphaeljs Element.attr](http://raphaeljs.com/reference.html#Element.attr) ，`textStyle`定义文字样式。
 
 新增文字节点位置视口内随机。
 
@@ -127,7 +127,7 @@ RGraph包含特性：
 
 ###instance.addEdge(edge)
 
-添加一条线，edge必须有`source`,`target`属性箭头由source->target，`label`属性定义箭头上的label文字。arrowStyle定义箭头的颜色样式，格式以及可以设置的属性参见[Raphaeljs Element.attr]("http://raphaeljs.com/reference.html#Element.attr")
+添加一条线，edge必须有`source`,`target`属性箭头由source->target，`label`属性定义箭头上的label文字。arrowStyle定义箭头的颜色样式，格式以及可以设置的属性参见 [Raphaeljs Element.attr](http://raphaeljs.com/reference.html#Element.attr)
 
 ###instance.loadData(graphData)
 
