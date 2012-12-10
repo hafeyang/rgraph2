@@ -8,7 +8,7 @@ github地址 :
 
     git clone https://github.com/hafeyang/rgraph2.git
 
-使用案例：![xRelation](https://raw.github.com/hafeyang/rgraph2/master/xrelation.png)
+使用案例：xRelation: ![xRelation](https://raw.github.com/hafeyang/rgraph2/master/xrelation.png)
 
 RGraph包含特性：
 
