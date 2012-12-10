@@ -154,7 +154,7 @@ RGraph°üº¬ÌØÐÔ£º
 
 [Graph visualization code in javascript](http://stackoverflow.com/questions/7034/graph-visualization-code-in-javascript)
 
-
+[JavaScript Graph Library Showcase](http://www.graphdracula.net/showcase/)
 
 
 ##Knows Issues
