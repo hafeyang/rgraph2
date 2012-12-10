@@ -1,4 +1,4 @@
-[xRelation by RGraph2](https://raw.github.com/hafeyang/rgraph2/master/xrelation.png)
+![xRelation by RGraph2](https://raw.github.com/hafeyang/rgraph2/master/xrelation.png)
 
 ##RGraph2
 
