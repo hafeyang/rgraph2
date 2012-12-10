@@ -8,6 +8,8 @@ github地址 :
 
     git clone https://github.com/hafeyang/rgraph2.git
 
+使用案例：![xRelation](https://raw.github.com/hafeyang/rgraph2/master/xrelation.png)
+
 RGraph包含特性：
 
 * 点->线图布局算法(2.0新增)
