@@ -1,3 +1,5 @@
+[xRelation by RGraph2](https://raw.github.com/hafeyang/rgraph2/master/xrelation.png)
+
 ##RGraph2
 
 RGraph是一个基于[Raphaeljs](http://raphaeljs.com/)完整的点->线图的web实现。
@@ -8,7 +10,6 @@ github地址 :
 
     git clone https://github.com/hafeyang/rgraph2.git
 
-使用案例：xRelation: ![xRelation](https://raw.github.com/hafeyang/rgraph2/master/xrelation.png)
 
 RGraph包含特性：
 
