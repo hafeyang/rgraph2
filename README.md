@@ -2,22 +2,27 @@
 
 ##RGraph2
 
-RGraphÊÇÒ»¸ö»ùÓÚ[Raphaeljs](http://raphaeljs.com/)ÍêÕûµÄµã->ÏßÍ¼µÄwebÊµÏÖ¡£
+RGraphæ˜¯ä¸€ä¸ªåŸºäº[Raphaeljs](http://raphaeljs.com/)å®Œæ•´çš„ç‚¹->çº¿å›¾çš„webå®ç°ã€‚
 
-online demo £º[RGraph2 Demo](http://hafeyang.github.com/rgraph2/)
+online demo ï¼š[RGraph2 Demo](http://hafeyang.github.com/rgraph2/)
 
-githubµØÖ· :
+githubåœ°å€ :
 
     git clone https://github.com/hafeyang/rgraph2.git
 
+RGraph2å·²ç»æ”¯æŒ[bower](http://twitter.github.com/bower/)åŒ…è§„èŒƒï¼Œå¯ä»¥ç›´æ¥ä½¿ç”¨`bower`å®‰è£…
 
-RGraph°üº¬ÌØĞÔ£º
+    bower install rgraph2
 
-* µã->ÏßÍ¼²¼¾ÖËã·¨(2.0ĞÂÔö)
-* »ù±¾»­²¼ÍÏ×§
-* µãÍÏ¶¯£¬Êó±êhover¸ßÁÁÏà¹Øµã
-* Ö§³Ö·Å´ó/ËõĞ¡/Êó±ê¹öÂÖÊÂ¼ş
-* Ìá¹©APIÔö/É¾/¸Ä½Úµã
+ç”±äº[Raphaeljs](http://raphaeljs.com/)ç›®å‰ä¸æ”¯æŒ`bower`è§„èŒƒï¼Œæ‰€ä»¥æ²¡æœ‰å¼•å…¥`Raphaeljs`ä¾èµ–
+
+RGraphåŒ…å«ç‰¹æ€§ï¼š
+
+* ç‚¹->çº¿å›¾å¸ƒå±€ç®—æ³•(2.0æ–°å¢)
+* åŸºæœ¬ç”»å¸ƒæ‹–æ‹½
+* ç‚¹æ‹–åŠ¨ï¼Œé¼ æ ‡hoveré«˜äº®ç›¸å…³ç‚¹
+* æ”¯æŒæ”¾å¤§/ç¼©å°/é¼ æ ‡æ»šè½®äº‹ä»¶
+* æä¾›APIå¢/åˆ /æ”¹èŠ‚ç‚¹
 
 ##Quick Demo
 
@@ -25,85 +30,85 @@ RGraph°üº¬ÌØĞÔ£º
 	<script type="text/javascript" src="https://raw.github.com/hafeyang/rgraph2/master/lib/rgraph2.js"></script>
 	<script type="text/javascript">
 	var graph = new RGraph("canvas");
-	//¼ÓÔØÊı¾İ
+	//åŠ è½½æ•°æ®
 	graph.loadData({
 		nodes:{
-			//label£ºÏÔÊ¾ÎÄ×Ö£¬Ö§³ÖRaphael.fullfill¸ñÊ½¡£
-			//rectStyle,textStyle ÎÄ±¾¿òµÄÑÕÉ«£¬ÎÄ×ÖÑÕÉ«
-			"1":{"label":"{name}",name:"½Úµã1",rectStyle:{fill:"#616130",stroke:"#616130"},textStyle:{fill:"#fff"}},
-			"2":{"label":"½Úµã2"}
+			//labelï¼šæ˜¾ç¤ºæ–‡å­—ï¼Œæ”¯æŒRaphael.fullfillæ ¼å¼ã€‚
+			//rectStyle,textStyle æ–‡æœ¬æ¡†çš„é¢œè‰²ï¼Œæ–‡å­—é¢œè‰²
+			"1":{"label":"{name}",name:"èŠ‚ç‚¹1",rectStyle:{fill:"#616130",stroke:"#616130"},textStyle:{fill:"#fff"}},
+			"2":{"label":"èŠ‚ç‚¹2"}
 		},
 		edges:[
-			//source,target ÊÇ½ÚµãµÄID £¬¼ıÍ·ÓÉsource->target
-			//arrowStyle,Ö¸¶¨¼ıÍ·ÑÕÉ«
+			//source,target æ˜¯èŠ‚ç‚¹çš„ID ï¼Œç®­å¤´ç”±source->target
+			//arrowStyle,æŒ‡å®šç®­å¤´é¢œè‰²
 			{source:"1",target:"2",label:"1->2",arrowStyle:{fill:"#ab4",stroke:"#ab4"}}
 		]
 	});
-	//½«IDÎª1µÄ½ÚµãÒÆÖÁÊÓ¿ÚÖĞÑë
+	//å°†IDä¸º1çš„èŠ‚ç‚¹ç§»è‡³è§†å£ä¸­å¤®
 	graph.center("1");
 	</script>
 
-##³õÊ¼»¯²ÎÊı
+##åˆå§‹åŒ–å‚æ•°
 
 	var graph = new RGraph("canvas",opts);
 
 ###opts.drawNodeFn
 
-»æÖÆ½ÚµãµÄRaphaeljsÀ©Õ¹·½·¨£¬Ä¬ÈÏÎª`rgraphnode`,RGraph2ÄÚ²¿Ä¬ÈÏÊµÏÖ£¬×Ô¶¨Òå½Úµã»æÖÆ·½·¨Îª£º
+ç»˜åˆ¶èŠ‚ç‚¹çš„Raphaeljsæ‰©å±•æ–¹æ³•ï¼Œé»˜è®¤ä¸º`rgraphnode`,RGraph2å†…éƒ¨é»˜è®¤å®ç°ï¼Œè‡ªå®šä¹‰èŠ‚ç‚¹ç»˜åˆ¶æ–¹æ³•ä¸ºï¼š
 
     (!Raphael.fn.rgraphnode ) && (Raphael.fn.rgraphnode=function(node){
         // your implementation
 	    return {
-	    	//ÒÆ¶¯½ÚµãÊ±»áµ÷ÓÃ¸Ã·½·¨
+	    	//ç§»åŠ¨èŠ‚ç‚¹æ—¶ä¼šè°ƒç”¨è¯¥æ–¹æ³•
 	    	move:function(dx,dy){},
-	    	//¸ßÁÁ½ÚµãÊ±»áµ÷ÓÃ¸Ã·½·¨
+	    	//é«˜äº®èŠ‚ç‚¹æ—¶ä¼šè°ƒç”¨è¯¥æ–¹æ³•
 	    	highlight:function(){},
-	    	//Çå³ı¸ßÁÁ
+	    	//æ¸…é™¤é«˜äº®
 	    	unhighlight:function(){},
-	    	//¸üĞÂ½ÚµãÎÄ±¾
+	    	//æ›´æ–°èŠ‚ç‚¹æ–‡æœ¬
 	    	update:function(){}
 	    }
 	});
 
-¾ßÌå¿ÉÒÔ²Î¼ûRGraph2ÄÚ²¿ÊµÏÖ
+å…·ä½“å¯ä»¥å‚è§RGraph2å†…éƒ¨å®ç°
 
 ###opts.onnodeclick(e,node)
 
-½Úµã½Úµã´¥·¢`function`£¬²ÎÊı`event,node`
+èŠ‚ç‚¹èŠ‚ç‚¹è§¦å‘`function`ï¼Œå‚æ•°`event,node`
 
 ###opts.onnodemouseover(e,node)
 
-½Úµãmouseover´¥·¢`function`£¬²ÎÊı`event,node`
+èŠ‚ç‚¹mouseoverè§¦å‘`function`ï¼Œå‚æ•°`event,node`
 
 ###opts.onnodemouseout(e,node)
 
-½Úµãmouseout´¥·¢`function`£¬²ÎÊı`event,node`
+èŠ‚ç‚¹mouseoutè§¦å‘`function`ï¼Œå‚æ•°`event,node`
 
 ###opts.nnodestartdrag(e,node)
 
-½Úµã¿ªÊ¼ÍÏ×§´¥·¢`function`£¬²ÎÊı`event,node`
+èŠ‚ç‚¹å¼€å§‹æ‹–æ‹½è§¦å‘`function`ï¼Œå‚æ•°`event,node`
 
 ###opts.onnodedragging(e,node)
 
-½ÚµãÍÏ×§ÖĞ´¥·¢`function`£¬²ÎÊı`event,node`
+èŠ‚ç‚¹æ‹–æ‹½ä¸­è§¦å‘`function`ï¼Œå‚æ•°`event,node`
 
 
 ###opts.onnodeenddrag(e,node)
 
-½ÚµãÍÏ×§½áÊø´¥·¢`function`£¬²ÎÊı`event,node`
+èŠ‚ç‚¹æ‹–æ‹½ç»“æŸè§¦å‘`function`ï¼Œå‚æ•°`event,node`
 
 
 ###API
 
-    µ÷ÓÃ·½·¨£ºgraphInstance.method()
+    è°ƒç”¨æ–¹æ³•ï¼šgraphInstance.method()
 
 ###instance.removeNode(nodeId)
 
-É¾³ı½ÚµãÒÔ¼°½ÚµãÏà¹ØµÄÏß
+åˆ é™¤èŠ‚ç‚¹ä»¥åŠèŠ‚ç‚¹ç›¸å…³çš„çº¿
 
 ###instance.updateNode(nodeId)
 
-¸üĞÂ½ÚµãÎÄ±¾
+æ›´æ–°èŠ‚ç‚¹æ–‡æœ¬
 
     var node = graphInstance.getNode("nodeId");
     node.label = "{name} after update";
@@ -111,43 +116,43 @@ RGraph°üº¬ÌØĞÔ£º
 
 ###instance.getNode(nodeId)
 
-¸ù¾İ½ÚµãID»ñÈ¡½Úµã¶ÔÏó
+æ ¹æ®èŠ‚ç‚¹IDè·å–èŠ‚ç‚¹å¯¹è±¡
 
 ###instance.addNode(node)
 
-Ìí¼Ó½Úµã£¬½Úµã±ØĞëÓĞ`nodeId`,`label`ÊôĞÔ£¬`rectStyle`ÓÃÓÚ¶¨Òå½Úµã±ß¿òÑùÊ½£¬ÑùÊ½¸ñÊ½Ïê¼û[Raphaeljs Element.attr](http://raphaeljs.com/reference.html#Element.attr) £¬`textStyle`¶¨ÒåÎÄ×ÖÑùÊ½¡£
+æ·»åŠ èŠ‚ç‚¹ï¼ŒèŠ‚ç‚¹å¿…é¡»æœ‰`nodeId`,`label`å±æ€§ï¼Œ`rectStyle`ç”¨äºå®šä¹‰èŠ‚ç‚¹è¾¹æ¡†æ ·å¼ï¼Œæ ·å¼æ ¼å¼è¯¦è§[Raphaeljs Element.attr](http://raphaeljs.com/reference.html#Element.attr) ï¼Œ`textStyle`å®šä¹‰æ–‡å­—æ ·å¼ã€‚
 
-ĞÂÔöÎÄ×Ö½ÚµãÎ»ÖÃÊÓ¿ÚÄÚËæ»ú¡£
+æ–°å¢æ–‡å­—èŠ‚ç‚¹ä½ç½®è§†å£å†…éšæœºã€‚
 
     graphInstance.addNode({nodeId:"nodeId---",label:"{nodename}",nodename:"Name"});
 
 ###instance.existEdge(sourceNodeId,targetNodeId)
 
-ÊÇ·ñ´æÔÚsourceNodeÓëtargetNodeÖ®¼äµÄÏß£¬Èç¹ûÓĞ·µ»Ø¸ÃEdge¶ÔÏó£¬·ñÔò·µ»Øfalse
+æ˜¯å¦å­˜åœ¨sourceNodeä¸targetNodeä¹‹é—´çš„çº¿ï¼Œå¦‚æœæœ‰è¿”å›è¯¥Edgeå¯¹è±¡ï¼Œå¦åˆ™è¿”å›false
 
 ###instance.addEdge(edge)
 
-Ìí¼ÓÒ»ÌõÏß£¬edge±ØĞëÓĞ`source`,`target`ÊôĞÔ¼ıÍ·ÓÉsource->target£¬`label`ÊôĞÔ¶¨Òå¼ıÍ·ÉÏµÄlabelÎÄ×Ö¡£arrowStyle¶¨Òå¼ıÍ·µÄÑÕÉ«ÑùÊ½£¬¸ñÊ½ÒÔ¼°¿ÉÒÔÉèÖÃµÄÊôĞÔ²Î¼û [Raphaeljs Element.attr](http://raphaeljs.com/reference.html#Element.attr)
+æ·»åŠ ä¸€æ¡çº¿ï¼Œedgeå¿…é¡»æœ‰`source`,`target`å±æ€§ç®­å¤´ç”±source->targetï¼Œ`label`å±æ€§å®šä¹‰ç®­å¤´ä¸Šçš„labelæ–‡å­—ã€‚arrowStyleå®šä¹‰ç®­å¤´çš„é¢œè‰²æ ·å¼ï¼Œæ ¼å¼ä»¥åŠå¯ä»¥è®¾ç½®çš„å±æ€§å‚è§ [Raphaeljs Element.attr](http://raphaeljs.com/reference.html#Element.attr)
 
 ###instance.loadData(graphData)
 
-¼ÓÔØÍ¼Êı¾İ£¬Êı¾İ¸ñÊ½¼ûdemo
+åŠ è½½å›¾æ•°æ®ï¼Œæ•°æ®æ ¼å¼è§demo
 
 ###instance.relayout()
 
-ÖØĞÂ²¼¾Öµã->ÏßÎ»ÖÃ
+é‡æ–°å¸ƒå±€ç‚¹->çº¿ä½ç½®
 
 ###instance.getNodeEdges(nodeId)
 
-¸ù¾İnodeId»ñÈ¡½ÚµãÏà¹ØµÄ±ß
+æ ¹æ®nodeIdè·å–èŠ‚ç‚¹ç›¸å…³çš„è¾¹
 
 ###instane.reset()
 
-·½·¨±¶ÊıÉèÖÃ³É1¡£ÊÓ¿Ú»¹Ô­¡£
+æ–¹æ³•å€æ•°è®¾ç½®æˆ1ã€‚è§†å£è¿˜åŸã€‚
 
 ###instance.center(nodeId)
 
-½«nodeId½ÚµãÒÆÖÁÊÓ¿ÚÖĞÑë
+å°†nodeIdèŠ‚ç‚¹ç§»è‡³è§†å£ä¸­å¤®
 
 ##References
 
@@ -162,12 +167,10 @@ RGraph°üº¬ÌØĞÔ£º
 
 ##Knows Issues
 
-`Raphaeljs` `Element.getBBox`·½·¨ÔÚIE<9ÏÂ»ñÈ¡Öµ²»ÕıÈ·µ¼ÖÂIE9ÏÂ²»ÄÜ¼æÈİ
+`Raphaeljs` `Element.getBBox`æ–¹æ³•åœ¨IE<9ä¸‹è·å–å€¼ä¸æ­£ç¡®å¯¼è‡´IE9ä¸‹ä¸èƒ½å…¼å®¹
 
 
 <hr/>
 
-Thanks£¬any questions ,contact me freely!
-
-
+Thanksï¼Œany questions ,contact me freely!
 
