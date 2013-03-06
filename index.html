@@ -7,7 +7,6 @@
 </head>
 <body>
 
-<div id="canvas">
     <div id="toolbar" class="toolbar">
         <span style="float:right; margin-top:6px;padding-right:20px;"></span>
         <span>
@@ -19,15 +18,17 @@
             <input type="button" id="" value="更新节点"  class="tbtn" onclick="updateNode();" />
             <input type="button" id="" value="删除节点"  class="tbtn" onclick="removeNode();" />
             <input type="button" id="" value="重新布局"  class="tbtn" onclick="relayout();" />
+            <input type="button" id="" value="导出图片"  class="tbtn" onclick="exportPng();" />
             <b id="msg" style="color:red;margin-left:200px;">IE&lt;9请暂时移步:)</b>
         </span>
     </div>
+<div id="canvas">
 
 </div>
 <style type="text/css">
 html,body,#canvas{margin:0px;padding:0px;height:100%; overflow:hidden; font-size:12px;}
     #canvas{position:relative;z-index:1;}
-    .toolbar{position:absolute;left:0px;top:0px;width:100%;padding:4px 0px;background-color:#ECF4FA;font-size:12px;border:1px solid #ccc;margin-bottom:1px;opacity:0.8;filter:alpha(opacity=80);}
+    .toolbar{position:absolute;left:0px;top:0px;width:100%;z-index:88;padding:4px 0px;background-color:#ECF4FA;font-size:12px;border:1px solid #ccc;margin-bottom:1px;opacity:0.8;filter:alpha(opacity=80);}
     .tbtn {
         -moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
         -webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
@@ -141,6 +142,23 @@ window.onload = function(){
     relayout = function(){
         graph.relayout();
         graph.center("1");
+    }
+
+    exportPng  = function(){
+        var exportform = document.getElementById("_exportform");
+        if(!exportform){
+            exportform = document.createElement("form");
+            exportform.id="_exportform";
+            exportform.style.display="none";
+            exportform.method="post";
+            exportform.action="export/export.php";
+            exportform.target="_blank";
+            exportform.innerHTML="<input type='hidden' id='_exportsvg' name='svg' />";
+            document.body.appendChild(exportform);
+        }
+        navigator.userAgent.indexOf("MSIE 9.0")> 0 && document.getElementById("canvas").childNodes[0].removeAttribute("xmlns") ;
+        document.getElementById("_exportsvg").value = document.getElementById("canvas").innerHTML;
+        exportform.submit();
     }
 }
 </script>
